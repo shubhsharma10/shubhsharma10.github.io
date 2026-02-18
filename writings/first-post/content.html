@@ -1,0 +1,36 @@
+<p>
+  This is my first post. I have been thinking of building a database from
+  scratch for a long time(~ 4 years). After LLMs I think for the first time I
+  feel one can learn anything if there is intent. Many people who are much
+  smarter than me have said Action is more powerful than Talent.
+</p>
+<p>
+  So I am also starting my journey. Idea is to write each component by myself
+  without using any LLM tools. I will use LLM tools to guide me. Components I
+  will build are following:
+</p>
+
+<ol>
+  <li>
+    Append-only KV store with indexing, crash recovery of indexing (Bitcask)
+  </li>
+  <li>
+    Persistent KV Store with SS Table, Background Compaction and Tombstone for
+    deletes (LevelDB, RocksDB)
+  </li>
+  <li>
+    B+ Tree Index with Range scans, Ordered iteration, Page splitting,
+    Disk-backed nodes and Visual debugger for tree (SQLite)
+  </li>
+  <li>ACID with WAL with MVCC (Postgres)</li>
+  <li>Query engine with Parser, Planner, Optimizer, Execution engine</li>
+  <li>Replicated KV Store with Raft (etcd and Cockroach DB)</li>
+  <li>OLAP / Search Engine / Streaming DB</li>
+</ol>
+
+<p>
+  My hope is that by the end of this I will have understood what databases are
+  at a fundamental level. I have read multiple books. But it's always been very
+  hand-wavy. Unless you build something from scratch you don't understand
+  complexities involved in it. Well starting anyway :)
+</p>

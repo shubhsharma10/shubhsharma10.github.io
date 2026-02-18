@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="page-title">Loading…</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
+    <script>
+      if (
+        localStorage.theme === "dark" ||
+        (!localStorage.theme &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      }
+    </script>
+  </head>
+  <body class="bg-white text-stone-900 dark:bg-stone-900 dark:text-stone-100 antialiased">
+    <main class="max-w-2xl mx-auto px-6 py-16 relative">
+      <!-- Dark mode toggle -->
+      <button
+        id="theme-toggle"
+        onclick="toggleTheme()"
+        class="absolute top-6 right-6 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors text-lg"
+        aria-label="Toggle dark mode"
+      >
+        <span id="theme-icon"></span>
+      </button>
+      <script>
+        document.getElementById("theme-icon").textContent =
+          document.documentElement.classList.contains("dark") ? "☀︎" : "☾";
+        function toggleTheme() {
+          const isDark = document.documentElement.classList.toggle("dark");
+          localStorage.theme = isDark ? "dark" : "light";
+          document.getElementById("theme-icon").textContent = isDark
+            ? "☀︎"
+            : "☾";
+        }
+      </script>
+      <!-- Back link -->
+      <a
+        href="../index.html"
+        class="text-sm text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+        >&larr; Back</a
+      >
+
+      <!-- Post header -->
+      <header class="mt-8 mb-12">
+        <h1 id="post-title" class="text-2xl font-bold mb-2"></h1>
+        <time id="post-date" class="text-sm text-stone-500 dark:text-stone-400"></time>
+      </header>
+
+      <!-- Post content injected here -->
+      <article
+        id="post-content"
+        class="prose-custom leading-relaxed text-stone-800 dark:text-stone-200"
+      ></article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-2xl mx-auto px-6 pb-16">
+      <p class="text-xs text-stone-400 dark:text-stone-500">
+        &copy;
+        <script>
+          document.write(new Date().getFullYear());
+        </script>
+        Shubham Sharma
+      </p>
+    </footer>
+
+    <style>
+      .prose-custom h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+      }
+      .prose-custom h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .prose-custom p {
+        margin-bottom: 1rem;
+      }
+      .prose-custom ul,
+      .prose-custom ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+      }
+      .prose-custom ul {
+        list-style-type: disc;
+      }
+      .prose-custom ol {
+        list-style-type: decimal;
+      }
+      .prose-custom li {
+        margin-bottom: 0.25rem;
+      }
+      .prose-custom pre {
+        background-color: #f5f5f4;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+      .prose-custom code {
+        font-size: 0.875rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          monospace;
+      }
+      .prose-custom :not(pre) > code {
+        background-color: #f5f5f4;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+      }
+      .prose-custom img {
+        max-width: 100%;
+        border-radius: 0.375rem;
+        margin: 1.5rem 0;
+      }
+      .prose-custom blockquote {
+        border-left: 3px solid #d6d3d1;
+        padding-left: 1rem;
+        color: #78716c;
+        margin-bottom: 1rem;
+      }
+      .prose-custom a {
+        color: #2563eb;
+        text-decoration: underline;
+      }
+      .prose-custom a:hover {
+        color: #1d4ed8;
+      }
+      .dark .prose-custom pre {
+        background-color: #292524;
+      }
+      .dark .prose-custom :not(pre) > code {
+        background-color: #292524;
+      }
+      .dark .prose-custom blockquote {
+        border-left-color: #57534e;
+        color: #a8a29e;
+      }
+      .dark .prose-custom a {
+        color: #60a5fa;
+      }
+      .dark .prose-custom a:hover {
+        color: #93c5fd;
+      }
+    </style>
+
+    <script>
+      const posts = {
+        "first-post": {
+          title: "First post",
+          date: "2026-02-18",
+        },
+      };
+
+      (async function () {
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get("post");
+
+        if (!slug || !posts[slug]) {
+          document.getElementById("post-content").innerHTML =
+            '<p class="text-stone-400">Post not found.</p>';
+          document.getElementById("page-title").textContent = "Not found";
+          return;
+        }
+
+        const meta = posts[slug];
+        document.getElementById("page-title").textContent = meta.title;
+        document.getElementById("post-title").textContent = meta.title;
+        document.getElementById("post-date").textContent = meta.date;
+
+        try {
+          const res = await fetch(`./${slug}/content.html`);
+          if (!res.ok) throw new Error(res.statusText);
+          document.getElementById("post-content").innerHTML = await res.text();
+        } catch (err) {
+          document.getElementById("post-content").innerHTML =
+            '<p class="text-stone-400">Failed to load post content.</p>';
+          console.error("Error loading post:", err);
+        }
+      })();
+    </script>
+  </body>
+</html>
